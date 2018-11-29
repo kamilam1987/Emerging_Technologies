@@ -77,3 +77,27 @@ print (history.history.keys())
 
 # Evaluate the model and makes prediction
 scores = model.evaluate(testData, mTestLabels, verbose=0)
+
+# Using matplotlib we can visualize how our model reacts at different epochs on both training and testing data.
+# History plot for accuracy
+plt.plot(history.history["acc"])
+plt.plot(history.history["val_acc"])
+plt.title("Model Accuracy")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.legend(["train", "test"], loc="upper left")
+
+# History plot for accuracy
+plt.plot(history.history["loss"])
+plt.plot(history.history["val_loss"])
+plt.title("Model Loss")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.legend(["train", "test"], loc="upper left")
+
+# Print the results
+print ("[INFO] test score - {}".format(scores[0]))
+print ("[INFO] test accuracy - {}".format(scores[1]))
+
+plt.show()
+
