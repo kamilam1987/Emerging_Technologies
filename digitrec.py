@@ -27,23 +27,27 @@ v_length = 784 # imension of flattened input image size i.e. if input image size
 
 # Splits the MNIST data into train and test
 (trainData, trainLabels), (testData, testLabels) = mnist.load_data()
-print ("[INFO] train data shape: {}".format(trainData.shape))
-print ("[INFO] test data shape: {}".format(testData.shape))
-print( "[INFO] train samples: {}".format(trainData.shape[0]))
-print ("[INFO] test samples: {}".format(testData.shape[0]))
+# Output train data shape
+print ("Train data shape: {}".format(trainData.shape))
+# Output test data shape
+print ("Test data shape: {}".format(testData.shape))
+# Output train samples
+print( "Train samples: {}".format(trainData.shape[0]))
+# Output train samples test samples
+print ("Test samples: {}".format(testData.shape[0]))
 
 # Reshapes the dataset
-trainData = trainData.reshape(train_size, v_length)
-testData = testData.reshape(test_size, v_length)
-trainData = trainData.astype("float32")
-testData = testData.astype("float32")
-trainData /= 255
+trainData = trainData.reshape(train_size, v_length) # Reshapes the train data
+testData = testData.reshape(test_size, v_length) # Reshapes the test data
+trainData = trainData.astype("float32") # For train data change the pixel intensities to float32
+testData = testData.astype("float32") # For test data change the pixel intensities to float32
+trainData /= 255 # grayscale image pixel intensities are integers in the range [0-255]
 testData /= 255
 
-print ("[INFO] train data shape: {}".format(trainData.shape))
-print ("[INFO] test data shape: {}".format(testData.shape))
-print ("[INFO] train samples: {}".format(trainData.shape[0]))
-print ("[INFO] test samples: {}".format(testData.shape[0]))
+print ("Train data shape: {}".format(trainData.shape))
+print ("Test data shape: {}".format(testData.shape))
+print ("Train samples: {}".format(trainData.shape[0]))
+print ("Test samples: {}".format(testData.shape[0]))
 
 # convert class vectors to binary class matrices --> one-hot encoding
 mTrainLabels = np_utils.to_categorical(trainLabels, num_classes)
@@ -72,7 +76,7 @@ model.compile(loss="categorical_crossentropy",optimizer="adam",metrics=["accurac
 # Takes two arguments : trainin data and training labels
 history = model.fit(trainData, mTrainLabels,validation_data=(testData, mTestLabels),batch_size=batch_size,nb_epoch=nb_epoch,verbose=2)
 
-# Prints the history keys
+# List all data in history
 print (history.history.keys())
 
 # Evaluate the model and makes prediction
@@ -86,6 +90,8 @@ plt.title("Model Accuracy")
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
 plt.legend(["train", "test"], loc="upper left")
+# Shows plots
+plt.show()
 
 # History plot for accuracy
 plt.plot(history.history["loss"])
@@ -94,10 +100,35 @@ plt.title("Model Loss")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.legend(["train", "test"], loc="upper left")
+# Shows plots
+plt.show()
 
 # Print the results
-print ("[INFO] test score - {}".format(scores[0]))
-print ("[INFO] test accuracy - {}".format(scores[1]))
+print ("Test score - {}".format(scores[0]))
+print ("Test accuracy - {}".format(scores[1]))
 
+# Takes some test images from the test data
+test_imgs= testData[5:9]
+
+# Reshape the test images to standard 28x28 format
+test_imgs = test_imgs.reshape(test_imgs.shape[0], 28, 28)
+# Output prediction for image
+print( "Test images shape - {}".format(test_imgs.shape))
+
+# Loop over each of the test images
+for i, test_img in enumerate(test_imgs, start=1):
+    # Takes a copy of test image for viewing
+    org_image = test_img
+    # For model to understand, have to reshape the test image to 1x784 format 
+    test_img = test_img.reshape(1,784)
+    # Make prediction on test image using our trained model
+    prediction = model.predict_classes(test_img, verbose=0)
+    # Output the prediction and image
+    print ("My prediction for image is - {}".format(prediction[0]))
+    plt.subplot(220+i)
+    plt.imshow(org_image, cmap=plt.get_cmap('gray'))
+
+
+# Shows plots
 plt.show()
 
