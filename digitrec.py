@@ -13,12 +13,15 @@ from keras.layers.core import Dense, Activation, Dropout
 # Import MNIST datase
 from keras.datasets import mnist
 from keras.utils import np_utils
+import cv2
+from keras.preprocessing import image
+from PIL import Image
 
 # Fixes a random seed for reproducibility
 np.random.seed(9)
 
 # User inputs
-nb_epoch = 25 # Number of iterations needed for the network to minimize the loss function, so that it learns the weights.
+nb_epoch = 10 # Number of iterations needed for the network to minimize the loss function, so that it learns the weights.
 num_classes = 10 # Total number of class labels or classes involved in the classification problem.
 batch_size = 128 # Number of images given to the model at a particular instance.
 train_size = 60000 # Number of training images to train the model.
@@ -44,9 +47,13 @@ testData = testData.astype("float32") # For test data change the pixel intensiti
 trainData /= 255 # grayscale image pixel intensities are integers in the range [0-255]
 testData /= 255
 
+# Output reshaped train data 
 print ("Train data shape: {}".format(trainData.shape))
+# Output reshaped test data  
 print ("Test data shape: {}".format(testData.shape))
+# Output reshaped train samples  
 print ("Train samples: {}".format(trainData.shape[0]))
+# Output reshaped test samples
 print ("Test samples: {}".format(testData.shape[0]))
 
 # convert class vectors to binary class matrices --> one-hot encoding
@@ -57,13 +64,13 @@ mTestLabels = np_utils.to_categorical(testLabels, num_classes)
 model = Sequential()
 # Two hidden layers are used with 512 neurons in hidden layer 1 a
 model.add(Dense(512, input_shape=(784,)))
-model.add(Activation("relu"))# Activation function for hidden layers
-model.add(Dropout(0.2))
-model.add(Dense(256))#  256 neurons in hidden layer 2
-model.add(Activation("relu"))
-model.add(Dropout(0.2))
+model.add(Activation("relu")) # Activation function for hidden layers
+model.add(Dropout(0.2)) # 20% is used as is a weight constraint on those layers
+model.add(Dense(256)) #  256 neurons in hidden layer 2
+model.add(Activation("relu"))  # Activation function for hidden layers
+model.add(Dropout(0.2))# 20% is used as is a weight constraint on those layers
 model.add(Dense(num_classes))
-model.add(Activation("softmax"))#  Activation function for output layer.
+model.add(Activation("softmax")) #  Activation function for output layer.
 
 # Summarizes the model
 model.summary()
@@ -128,7 +135,21 @@ for i, test_img in enumerate(test_imgs, start=1):
     plt.subplot(220+i)
     plt.imshow(org_image, cmap=plt.get_cmap('gray'))
 
-
 # Shows plots
 plt.show()
 
+# Test my own file with digit
+# Open image with PIL
+img1 = Image.open("img/test_number2.png") 
+# Resize image to 28x28 pixels
+img1 = img1.resize((28, 28), Image.ANTIALIAS)
+# Saves resized image
+img1.save("img/resized_number2.png")
+
+img = np.invert(Image.open("img/resized_number2.png").convert('1'))
+img = img.reshape(1,784)
+score = model.predict(img, batch_size=1, verbose=0)
+# Gets prediction
+prediction_new = model.predict_classes(img, verbose=0)
+#display the prediction and image
+print ("I think your digit is - {}".format(prediction_new[0]))
