@@ -20,7 +20,7 @@ from PIL import Image
 np.random.seed(9)
 
 # User inputs
-nb_epoch = 25 # Number of iterations needed for the network to minimize the loss function, so that it learns the weights.
+nb_epoch = 3 # Number of iterations needed for the network to minimize the loss function, so that it learns the weights.
 num_classes = 10 # Total number of class labels or classes involved in the classification problem.
 batch_size = 128 # Number of images given to the model at a particular instance.
 train_size = 60000 # Number of training images to train the model.
@@ -145,12 +145,11 @@ img1 = img1.resize((28, 28), Image.ANTIALIAS)
 # Saves resized image
 img1.save("img/resized_number.png")
 
-img = np.invert(Image.open("img/resized_number2.png").convert('1'))
+img = np.invert(Image.open("img/resized_number.png").convert('1'))
 img = img.reshape(1,784)
 score_test = model.predict(img, batch_size=1, verbose=0)
 # Gets prediction
 prediction_new = model.predict_classes(img, verbose=0)
 #display the prediction and image
 print ("I think your digit is - {}".format(prediction_new[0]))
-
 
